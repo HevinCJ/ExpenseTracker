@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">ExpenseTracker</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="TransactionType">TransactionType</string>
+
+    <string-array name="transactiontype">
+        <item>Expense</item>
+        <item>Income</item>
+    </string-array>
 </resources>
