@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/expnav"
+    app:startDestination="@id/dashBoard">
+
+    <fragment
+        android:id="@+id/dashBoard"
+        android:name="com.example.expensetracker.fragments.DashBoard"
+        android:label="DashBoard"
+        tools:layout="@layout/fragment_dash_board" >
+        <action
+            android:id="@+id/action_dashBoard_to_addtransaction"
+            app:destination="@id/addtransaction"
+            app:launchSingleTop="true"
+            app:popUpToInclusive="false" />
+        <action
+            android:id="@+id/action_dashBoard_to_updateFragment"
+            app:destination="@id/updateFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/expense"
+        android:name="com.example.expensetracker.fragments.Expense"
+        android:label="Expense"
+        tools:layout="@layout/fragment_expense" />
+    <fragment
+        android:id="@+id/income"
+        android:name="com.example.expensetracker.fragments.Income"
+        android:label="Income"
+        tools:layout="@layout/fragment_income" />
+    <fragment
+        android:id="@+id/addtransaction"
+        android:name="com.example.expensetracker.fragments.add.addtransaction"
+        android:label="Add Transaction"
+        tools:layout="@layout/fragment_addtransaction" >
+        <action
+            android:id="@+id/action_addtransaction_to_dashBoard"
+            app:destination="@id/dashBoard" />
+    </fragment>
+    <fragment
+        android:id="@+id/updateFragment"
+        android:name="com.example.expensetracker.fragments.UpdateFragment"
+        android:label="Update Transaction"
+        tools:layout="@layout/fragment_update" >
+        <action
+            android:id="@+id/action_updateFragment_to_dashBoard"
+            app:destination="@id/dashBoard" />
+        <argument
+            android:name="currenttransaction"
+            app:argType="com.example.expensetracker.database.Entity" />
+    </fragment>
+</navigation>
