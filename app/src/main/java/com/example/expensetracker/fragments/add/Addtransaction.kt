@@ -2,7 +2,6 @@ package com.example.expensetracker.fragments.add
 
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,8 +14,12 @@ import androidx.navigation.fragment.findNavController
 import com.example.expensetracker.R
 import com.example.expensetracker.ViewModel.mainViewModel
 import com.example.expensetracker.ViewModel.sharedViewModel
-import com.example.expensetracker.database.Entity
 import com.example.expensetracker.databinding.FragmentAddtransactionBinding
+import com.example.expensetracker.firebasedatabase.UserData
+
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class addtransaction : Fragment() {
@@ -27,6 +30,10 @@ class addtransaction : Fragment() {
     private val sharedViewModel: sharedViewModel by viewModels()
     private val mainViewModel: mainViewModel by viewModels()
 
+    private var databasereference:DatabaseReference?=null
+    private var auth:FirebaseAuth?=null
+    private lateinit var id:String
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -35,13 +42,17 @@ class addtransaction : Fragment() {
 
     addtransaction = FragmentAddtransactionBinding.inflate(layoutInflater,container,false)
 
+        auth = FirebaseAuth.getInstance()
+        databasereference = FirebaseDatabase.getInstance().getReference("Users")
+        id = databasereference?.push()?.key.toString()
+
 
 
 
         setupspinnerdropdown()
 
         binding.addtransactionbutton.setOnClickListener {
-            addtransactiontodb()
+            addtransactiontoFirebase()
         }
 
 
@@ -62,25 +73,38 @@ class addtransaction : Fragment() {
         }
     }
 
-    private fun addtransactiontodb() {
+    private fun addtransactiontoFirebase() {
         val title = binding.titletxt.editText?.text.toString()
-        val amount = binding.amounttxt.editText?.text.toString().toDouble()
+        val amount = binding.amounttxt.editText?.text.toString()
         val transactionType = binding.spinnerTranscation.selectedItem.toString()
-        val selecteddate = binding.edttxtdate.editText?.text.toString()
+        val date = binding.edttxtdate.editText?.text.toString()
         val note = binding.edttxtNote.editText?.text.toString()
 
-        val data = Entity(0,title,amount,sharedViewModel.parseTransactionTypeFromposition(transactionType),selecteddate,note)
-        Log.d("validationkey","$title,$amount,$transactionType,$selecteddate,$note")
 
-        if (sharedViewModel.userValidation(title,amount,transactionType,selecteddate,note)){
-            mainViewModel.insertTransaction(data)
-            Toast.makeText(requireContext(),"Added $title to the $transactionType",Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_addtransaction_to_dashBoard)
+        val user = UserData(id,title,amount,transactionType,date,note)
+
+        if (sharedViewModel.userValidation(title,amount,transactionType,date,note)) {
+            databasereference?.child(id)?.setValue(user)?.addOnCompleteListener {
+                if (it.isSuccessful) {
+                    findNavController().navigate(R.id.action_addtransaction_to_dashBoard)
+                    Toast.makeText(requireContext(), "Added $title", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        it.exception?.message.toString(),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
         }else{
-            Toast.makeText(requireContext(),"PLEASE FILL THE FIELDS",Toast.LENGTH_SHORT).show()
-
+            Toast.makeText(requireContext(),"Please Fill the Fields", Toast.LENGTH_SHORT).show()
         }
+
+
     }
+
+
+
 
 
 

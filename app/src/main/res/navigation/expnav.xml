@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/expnav"
-    app:startDestination="@id/dashBoard">
+    app:startDestination="@id/login">
 
     <fragment
         android:id="@+id/dashBoard"
@@ -48,6 +48,34 @@
             app:destination="@id/dashBoard" />
         <argument
             android:name="currenttransaction"
-            app:argType="com.example.expensetracker.database.Entity" />
+            app:argType="com.example.expensetracker.firebasedatabase.UserData" />
     </fragment>
+    <fragment
+        android:id="@+id/signUp"
+        android:name="com.example.expensetracker.loginandsignup.SignUp"
+        android:label="fragment_sign_up"
+        tools:layout="@layout/fragment_sign_up" >
+        <action
+            android:id="@+id/action_signUp_to_dashBoard"
+            app:destination="@id/dashBoard" />
+        <action
+            android:id="@+id/action_signUp_to_dashBoard2"
+            app:destination="@id/dashBoard" />
+        <action
+            android:id="@+id/action_signUp_to_login"
+            app:destination="@id/login" />
+    </fragment>
+    <fragment
+        android:id="@+id/login"
+        android:name="com.example.expensetracker.loginandsignup.Login"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+
+        <action
+            android:id="@+id/action_login_to_dashBoard"
+            app:destination="@id/dashBoard" />
+    </fragment>
+
+
 </navigation>
+

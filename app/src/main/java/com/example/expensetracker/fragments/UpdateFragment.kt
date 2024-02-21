@@ -13,10 +13,14 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.expensetracker.R
+import com.example.expensetracker.Utils.TransactionType
 import com.example.expensetracker.ViewModel.mainViewModel
 import com.example.expensetracker.ViewModel.sharedViewModel
-import com.example.expensetracker.database.Entity
 import com.example.expensetracker.databinding.FragmentUpdateBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import java.lang.IllegalArgumentException
 
 
 class UpdateFragment : Fragment() {
@@ -24,9 +28,13 @@ class UpdateFragment : Fragment() {
     private  var updatefrag:FragmentUpdateBinding ?=null
     private val binding get() = updatefrag!!
 
+    private var database:DatabaseReference?=null
+    private var auth:FirebaseAuth?=null
+
     private val args by navArgs<UpdateFragmentArgs>()
     private val sharedviewmodel:sharedViewModel by viewModels()
     private val mainviewmodel:mainViewModel by viewModels()
+    private lateinit var id:String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,7 +42,9 @@ class UpdateFragment : Fragment() {
     ): View? {
         updatefrag = FragmentUpdateBinding.inflate(layoutInflater,container,false)
 
-
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance().getReference("Users")
+        id = args.currenttransaction.id
 
         setupspinnerdropdown()
         showPreviewData()
@@ -54,29 +64,44 @@ class UpdateFragment : Fragment() {
 
 
     private fun updateTransaction() {
-
         val title = binding.titletxt.editText?.text.toString()
-        val amount = binding.amounttxt.editText?.text.toString().toDouble()
+        val amount = binding.amounttxt.editText?.text.toString()
         val type = binding.spinnerTranscation.selectedItem.toString()
         val date = binding.edttxtdate.editText?.text.toString()
         val note = binding.edttxtNote.editText?.text.toString()
 
-        val updateddate = Entity(args.currenttransaction.id,title,amount,sharedviewmodel.parseTransactionTypeFromposition(type),date,note)
 
-        if (sharedviewmodel.userValidation(title,amount,type,date,note))
-        {
-            mainviewmodel.updateTransaction(updateddate)
-            Toast.makeText(requireContext(),"Updated $title",Toast.LENGTH_SHORT).show()
-            findNavController().navigate(R.id.action_updateFragment_to_dashBoard)
 
+        val user = mutableMapOf<String,Any>(
+            "title" to title,
+            "amount" to amount,
+            "type" to type,
+            "date" to date,
+            "note" to note
+        )
+
+        if (sharedviewmodel.userValidation(title,amount,type,date,note)){
+            database?.child(id)?.updateChildren(user)
+                ?.addOnSuccessListener {
+                    Toast.makeText(requireContext(), " Updated:$title", Toast.LENGTH_SHORT).show()
+                    findNavController().navigate(R.id.action_updateFragment_to_dashBoard)
+                }
+                ?.addOnFailureListener {
+                    Toast.makeText(requireContext(), "Failed to Update:$title", Toast.LENGTH_SHORT).show()
+                }
+        }else{
+            Toast.makeText(requireContext(), "Please fill the fields", Toast.LENGTH_SHORT).show()
         }
+
+
     }
+
 
     private fun showPreviewData() {
         binding.titletxt.editText?.setText(args.currenttransaction.title)
-        binding.amounttxt.editText?.setText(args.currenttransaction.amount.toString())
+        binding.amounttxt.editText?.setText(args.currenttransaction.amount)
         binding.spinnerTranscation.setSelection(sharedviewmodel.parseTransactionTypeFromType(args.currenttransaction.type))
-        binding.edttxtdate.editText?.setText(args.currenttransaction.time)
+        binding.edttxtdate.editText?.setText(args.currenttransaction.date)
         binding.edttxtNote.editText?.setText(args.currenttransaction.note)
     }
 

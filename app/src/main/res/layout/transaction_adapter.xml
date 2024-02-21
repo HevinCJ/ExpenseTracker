@@ -6,7 +6,7 @@
     <data>
         <variable
             name="trackerentity"
-            type="com.example.expensetracker.database.Entity" />
+            type="com.example.expensetracker.firebasedatabase.UserData" />
 
     </data>
 
@@ -33,7 +33,7 @@
                 android:layout_marginStart="15dp"
                 android:layout_marginTop="8dp"
                 android:fontFamily="monospace"
-                android:text="@{trackerentity.time}"
+                android:text="@{trackerentity.date}"
                 tools:text="20-12-2024"
                 android:textSize="13sp"
                 app:layout_constraintStart_toStartOf="parent"
@@ -47,7 +47,7 @@
                 android:layout_marginBottom="8dp"
                 android:fontFamily="monospace"
                 tools:text="Income"
-                android:parseTransactionTypetoString="@{trackerentity.type}"
+                android:text="@{trackerentity.type}"
                 android:textSize="15sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />

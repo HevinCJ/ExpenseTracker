@@ -5,7 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.BindingAdapter
 import androidx.navigation.findNavController
 import com.example.expensetracker.Utils.TransactionType
-import com.example.expensetracker.database.Entity
+import com.example.expensetracker.firebasedatabase.UserData
 import com.example.expensetracker.fragments.DashBoardDirections
 
 class BindingAdapter {
@@ -30,7 +30,7 @@ class BindingAdapter {
 
         @BindingAdapter("android:navigateToUpdateFrag")
         @JvmStatic
-        fun navigateToUpdateFrag(layout:ConstraintLayout,entity: Entity){
+        fun navigateToUpdateFrag(layout:ConstraintLayout,entity: UserData){
             layout.setOnClickListener {
                 val action = DashBoardDirections.actionDashBoardToUpdateFragment(entity)
                 layout.findNavController().navigate(action)

@@ -34,13 +34,13 @@ class sharedViewModel(application: Application):AndroidViewModel(application) {
         datePickerDialogue.show()
     }
 
-    fun userValidation(title: String, Amount: Double, transactiontype: String, selecteddate: String, note: String): Boolean {
+    fun userValidation(title: String, Amount: String, transactiontype: String, selecteddate: String, note: String): Boolean {
         Log.d("validation",title)
-        return if ((TextUtils.isEmpty(title) || TextUtils.isEmpty(Amount.toString()) || TextUtils.isEmpty(transactiontype) || TextUtils.isEmpty(selecteddate) || TextUtils.isEmpty(note)))
+        return if ((TextUtils.isEmpty(title) || TextUtils.isEmpty(Amount) || TextUtils.isEmpty(transactiontype) || TextUtils.isEmpty(selecteddate) || TextUtils.isEmpty(note)))
           {
                 false
             }else{
-            !((TextUtils.isEmpty(title) || TextUtils.isEmpty(Amount.toString()) || TextUtils.isEmpty(transactiontype) || TextUtils.isEmpty(selecteddate) || TextUtils.isEmpty(note)))
+            !((TextUtils.isEmpty(title) || TextUtils.isEmpty(Amount) || TextUtils.isEmpty(transactiontype) || TextUtils.isEmpty(selecteddate) || TextUtils.isEmpty(note)))
 
         }
     }
@@ -54,12 +54,29 @@ class sharedViewModel(application: Application):AndroidViewModel(application) {
     }
 
 
-
-    fun parseTransactionTypeFromType(transactionType: TransactionType): Int {
+    fun parseTransactionTypeFromType(transactionType: String): Int {
         return when (transactionType) {
-            TransactionType.Expense -> 0
-            TransactionType.Income -> 1
+           "Expense" -> 0
+           "Income" -> 1
+            else -> {
+                return 0
+            }
         }
+    }
+
+
+     fun firebasecheckPasswordCorrect(password:String, confirmpassword:String):Boolean{
+        return password==confirmpassword
+    }
+
+     fun firebaseuservalidation(email:String, password: String, confirmpassword: String):Boolean{
+        return if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password) || TextUtils.isEmpty(confirmpassword)){
+            false
+        }
+        else{
+            true
+        }
+
     }
 
 
